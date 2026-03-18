@@ -16,6 +16,8 @@ import { TimeRangeProvider } from "@/components/time-range-provider";
 import { LogOut } from "lucide-react";
 import type { HeatmapDay } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const cookieStore = await cookies();
   const userId = cookieStore.get("user_id")?.value;
