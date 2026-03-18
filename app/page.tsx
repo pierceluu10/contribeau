@@ -5,7 +5,7 @@ import { ForceDark } from "@/components/force-dark";
 
 export default function Home() {
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center gap-8 overflow-hidden">
+    <main className="relative flex min-h-screen flex-col items-center justify-center gap-4 overflow-hidden">
       <ForceDark />
       <AppPreview />
       <div className="relative z-10 text-center space-y-3">
