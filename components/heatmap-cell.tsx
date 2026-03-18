@@ -21,16 +21,16 @@ export function HeatmapCell({ day }: { day: HeatmapDay | null }) {
           style={{ backgroundColor: getHeatmapColor(day.totalMs) }}
         />
       </TooltipTrigger>
-      <TooltipContent className="lowercase text-xs">
-        <p className="font-medium">{day.date}</p>
+      <TooltipContent className="lowercase text-xs flex flex-col gap-0.5">
+        <span className="font-medium">{day.date}</span>
         {day.totalMs > 0 ? (
           <>
-            <p>{formatMs(day.totalMs)} listened</p>
-            <p>{day.trackCount} tracks</p>
-            {day.topArtist && <p>top: {day.topArtist}</p>}
+            <span>{formatMs(day.totalMs)} listened</span>
+            <span>{day.trackCount} tracks</span>
+            {day.topArtist && <span>top: {day.topArtist}</span>}
           </>
         ) : (
-          <p>no listening data</p>
+          <span>no listening data</span>
         )}
       </TooltipContent>
     </Tooltip>

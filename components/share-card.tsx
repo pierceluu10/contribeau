@@ -5,9 +5,9 @@ import { forwardRef } from "react";
 function getShareHeatmapColor(totalMs: number): string {
   if (totalMs === 0) return "#161b22";
   const minutes = totalMs / 60_000;
-  if (minutes < 15) return "#0e4429";
-  if (minutes < 60) return "#006d32";
-  if (minutes < 120) return "#26a641";
+  if (minutes < 60) return "#0e4429";
+  if (minutes < 180) return "#006d32";
+  if (minutes < 300) return "#26a641";
   return "#1db954";
 }
 

@@ -18,15 +18,15 @@ export function AppPreview() {
     let t = 0;
 
     const animate = () => {
-      t += 0.004;
+      t += 0.012;
 
       circles.forEach((circle, i) => {
-        const angle = -t * (60 + i * 5.7);
+        const angle = -t * (80 + i * 8);
         circle.style.transform = `rotate(${angle}deg)`;
         circle.style.transformOrigin = "400px 300px";
       });
 
-      const offset = Math.sin(t * 0.25) * 300;
+      const offset = Math.sin(t * 0.5) * 400;
       for (const grad of grads) {
         const baseX1 = parseFloat(grad.dataset.x1 || "0");
         const baseX2 = parseFloat(grad.dataset.x2 || "0");

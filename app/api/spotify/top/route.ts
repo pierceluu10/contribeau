@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { supabase } from "@/lib/supabase";
 import { getValidToken, getTopItems } from "@/lib/spotify";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const cookieStore = await cookies();
   const userId = cookieStore.get("user_id")?.value;
@@ -31,5 +33,7 @@ export async function GET(req: NextRequest) {
   const token = await getValidToken(user);
   const data = await getTopItems(token, type, timeRange);
 
-  return NextResponse.json(data);
+  return NextResponse.json(data, {
+    headers: { "Cache-Control": "no-store, max-age=0" },
+  });
 }

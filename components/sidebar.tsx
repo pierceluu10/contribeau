@@ -7,10 +7,11 @@ import { ShinyCard } from "@/components/animata/card/shiny-card";
 import { TimeRangeTabs } from "./time-range-tabs";
 import { TopArtists } from "./top-artists";
 import { TopTracks } from "./top-tracks";
+import { useTimeRange } from "./time-range-provider";
 import type { SpotifyArtist, SpotifyTrack } from "@/lib/types";
 
 export function Sidebar() {
-  const [timeRange, setTimeRange] = useState("short_term");
+  const { timeRange, setTimeRange } = useTimeRange();
   const [artists, setArtists] = useState<SpotifyArtist[]>([]);
   const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,8 +20,8 @@ export function Sidebar() {
     setLoading(true);
     try {
       const [artistRes, trackRes] = await Promise.all([
-        fetch(`/api/spotify/top?type=artists&time_range=${range}`),
-        fetch(`/api/spotify/top?type=tracks&time_range=${range}`),
+        fetch(`/api/spotify/top?type=artists&time_range=${range}`, { cache: "no-store" }),
+        fetch(`/api/spotify/top?type=tracks&time_range=${range}`, { cache: "no-store" }),
       ]);
       if (!artistRes.ok || !trackRes.ok) throw new Error("Failed to fetch");
       const artistData = await artistRes.json();

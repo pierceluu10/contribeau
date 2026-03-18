@@ -4,39 +4,36 @@ import { useRef, useCallback, useState } from "react";
 import { toPng } from "html-to-image";
 import { Download, X, Share2 } from "lucide-react";
 import { ShareCard } from "./share-card";
+import { useTimeRange } from "./time-range-provider";
 
 interface ShareButtonProps {
   displayName: string;
   days: { date: string; totalMs: number }[];
-  totalTracks: number;
-  totalMinutes: number;
-  activeDays: number;
 }
 
 export function ShareButton({
   displayName,
   days,
-  totalTracks,
-  totalMinutes,
-  activeDays,
 }: ShareButtonProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [timeRange] = useState("short_term");
   const [topArtists, setTopArtists] = useState<string[]>([]);
   const [topTracks, setTopTracks] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const { timeRange, totalTracks, totalMinutes, activeDays } = useTimeRange();
 
   const handlePreview = useCallback(async () => {
     if (!cardRef.current) return;
     setLoading(true);
+    setError(null);
     try {
       // Fetch top artists + tracks for the card
       const [artistRes, trackRes] = await Promise.all([
-        fetch(`/api/spotify/top?type=artists&time_range=${timeRange}`),
-        fetch(`/api/spotify/top?type=tracks&time_range=${timeRange}`),
+        fetch(`/api/spotify/top?type=artists&time_range=${timeRange}`, { cache: "no-store" }),
+        fetch(`/api/spotify/top?type=tracks&time_range=${timeRange}`, { cache: "no-store" }),
       ]);
-      if (!artistRes.ok || !trackRes.ok) throw new Error("Failed to fetch");
+      if (!artistRes.ok || !trackRes.ok) throw new Error("Failed to fetch top items");
       const artistData = await artistRes.json();
       const trackData = await trackRes.json();
 
@@ -51,15 +48,16 @@ export function ShareButton({
       setTopTracks(tracks);
 
       // Wait a tick for React to re-render with the new data before capturing
-      await new Promise((r) => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 200));
 
       const dataUrl = await toPng(cardRef.current, {
         cacheBust: true,
         pixelRatio: 2,
       });
       setPreview(dataUrl);
-    } catch {
-      /* non-critical, fail silently */
+    } catch (err) {
+      console.error("Share card generation failed:", err);
+      setError("Failed to generate share card. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -98,6 +96,14 @@ export function ShareButton({
           timeRange={timeRange}
         />
       </div>
+
+      {/* error toast */}
+      {error && (
+        <div className="fixed bottom-4 right-4 z-50 bg-destructive text-destructive-foreground px-4 py-2 rounded-md text-sm shadow-lg">
+          {error}
+          <button onClick={() => setError(null)} className="ml-2 font-bold">×</button>
+        </div>
+      )}
 
       {/* preview modal */}
       {preview && (

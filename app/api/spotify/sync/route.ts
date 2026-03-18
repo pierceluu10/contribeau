@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { supabase } from "@/lib/supabase";
 import { getValidToken, getRecentlyPlayed } from "@/lib/spotify";
 
@@ -29,6 +30,7 @@ export async function POST() {
 
     const items = data?.items ?? [];
     if (items.length === 0) {
+      revalidatePath("/dashboard");
       return NextResponse.json({ inserted: 0 });
     }
 
@@ -69,6 +71,7 @@ export async function POST() {
         .eq("id", userId);
     }
 
+    revalidatePath("/dashboard");
     return NextResponse.json({ inserted: rows.length });
   } catch (err) {
     console.error("Sync error:", err);

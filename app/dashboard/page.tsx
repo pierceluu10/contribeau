@@ -7,11 +7,12 @@ import { Sidebar } from "@/components/sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { VantaBackground } from "@/components/vanta-background";
 import { FadeIn } from "@/components/motion-wrappers";
-import { ShinyCard } from "@/components/animata/card/shiny-card";
 import { ShareButton } from "@/components/share-button";
+import { StatsCards } from "@/components/stats-cards";
 import { NowPlaying } from "@/components/now-playing";
 import { SyncOnLoad } from "@/components/sync-on-load";
 import { RefreshButton } from "@/components/refresh-button";
+import { TimeRangeProvider } from "@/components/time-range-provider";
 import { LogOut } from "lucide-react";
 import type { HeatmapDay } from "@/lib/types";
 
@@ -81,99 +82,70 @@ export default async function DashboardPage() {
     }
   );
 
-  // compute summary stats
-  const totalTracks = days.reduce((sum, d) => sum + d.trackCount, 0);
-  const totalMinutes = Math.round(
-    days.reduce((sum, d) => sum + d.totalMs, 0) / 60000
-  );
-  const activeDays = days.length;
-
   const shareDays = days.map((d) => ({ date: d.date, totalMs: d.totalMs }));
 
   return (
-    <main className="h-screen flex flex-col overflow-hidden p-4 md:p-6 relative">
-      {/* Sync recent tracks on load */}
-      <SyncOnLoad />
-      {/* Vanta birds background */}
-      <VantaBackground />
+    <TimeRangeProvider days={days}>
+      <main className="h-screen flex flex-col overflow-hidden p-4 md:p-6 relative">
+        {/* Sync recent tracks on load */}
+        <SyncOnLoad />
+        {/* Vanta birds background */}
+        <VantaBackground />
 
-      {/* content above background */}
-      <div className="relative z-10 flex flex-col h-full gap-3">
-        {/* header */}
-        <FadeIn delay={0}>
-          <div className="flex items-center justify-between max-w-screen-2xl mx-auto w-full">
-            <div>
-              <h1 className="text-2xl font-bold lowercase">
-                {user.display_name}&apos;s listening activity
-              </h1>
-              <p className="text-xs text-muted-foreground lowercase">
-                keep listening to see more data!!
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <RefreshButton />
-              <ShareButton
-                displayName={user.display_name}
-                days={shareDays}
-                totalTracks={totalTracks}
-                totalMinutes={totalMinutes}
-                activeDays={activeDays}
-              />
-              <ThemeToggle />
-              <Link
-                href="/api/auth/logout"
-                className="inline-flex items-center justify-center h-8 w-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-              >
-                <LogOut className="h-5 w-5" />
-              </Link>
-            </div>
-          </div>
-        </FadeIn>
-
-        {/* heatmap — full width */}
-        <FadeIn delay={0.15}>
-          <div className="max-w-screen-2xl mx-auto w-full">
-            <Heatmap days={days} />
-          </div>
-        </FadeIn>
-
-        {/* sidebar + stats below */}
-        <FadeIn delay={0.3} className="flex-1 min-h-0 overflow-hidden">
-          <div className="max-w-screen-2xl mx-auto w-full flex flex-col lg:flex-row lg:items-start gap-4 h-full overflow-hidden">
-            {/* top artists/tracks — left */}
-            <aside className="lg:w-96 shrink-0 overflow-y-auto h-full">
-              <Sidebar />
-            </aside>
-
-            {/* summary stats — stacked to the right */}
-            <div className="flex flex-col gap-3 lg:w-48 shrink-0">
-              <ShinyCard className="px-3 py-2">
+        {/* content above background */}
+        <div className="relative z-10 flex flex-col h-full gap-3">
+          {/* header */}
+          <FadeIn delay={0}>
+            <div className="flex items-center justify-between max-w-screen-2xl mx-auto w-full">
+              <div>
+                <h1 className="text-2xl font-bold lowercase">
+                  {user.display_name}&apos;s listening activity
+                </h1>
                 <p className="text-xs text-muted-foreground lowercase">
-                  tracks played
+                  keep listening to see more data!!
                 </p>
-                <p className="text-xl font-bold">
-                  {totalTracks.toLocaleString()}
-                </p>
-              </ShinyCard>
-              <ShinyCard className="px-3 py-2">
-                <p className="text-xs text-muted-foreground lowercase">
-                  minutes listened
-                </p>
-                <p className="text-xl font-bold">
-                  {totalMinutes.toLocaleString()}
-                </p>
-              </ShinyCard>
-              <ShinyCard className="px-3 py-2">
-                <p className="text-xs text-muted-foreground lowercase">
-                  active days
-                </p>
-                <p className="text-xl font-bold">{activeDays}</p>
-              </ShinyCard>
-              <NowPlaying />
+              </div>
+              <div className="flex items-center gap-2">
+                <RefreshButton />
+                <ShareButton
+                  displayName={user.display_name}
+                  days={shareDays}
+                />
+                <ThemeToggle />
+                <Link
+                  href="/api/auth/logout"
+                  className="inline-flex items-center justify-center h-8 w-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                >
+                  <LogOut className="h-5 w-5" />
+                </Link>
+              </div>
             </div>
-          </div>
-        </FadeIn>
-      </div>
-    </main>
+          </FadeIn>
+
+          {/* heatmap — full width */}
+          <FadeIn delay={0.15}>
+            <div className="max-w-screen-2xl mx-auto w-full">
+              <Heatmap days={days} />
+            </div>
+          </FadeIn>
+
+          {/* sidebar + stats below */}
+          <FadeIn delay={0.3} className="flex-1 min-h-0 overflow-hidden">
+            <div className="max-w-screen-2xl mx-auto w-full flex flex-col lg:flex-row lg:items-start gap-4 h-full overflow-hidden">
+              {/* top artists/tracks — left */}
+              <aside className="lg:w-96 shrink-0 overflow-y-auto h-full">
+                <Sidebar />
+              </aside>
+
+              {/* summary stats — stacked to the right */}
+              <div className="flex flex-col gap-3 lg:w-48 shrink-0">
+                <StatsCards />
+                <NowPlaying />
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </main>
+    </TimeRangeProvider>
   );
 }
