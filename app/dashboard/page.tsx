@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Heatmap } from "@/components/heatmap";
 import { Sidebar } from "@/components/sidebar";
@@ -123,12 +122,12 @@ export default async function DashboardPage() {
                   days={shareDays}
                 />
                 <ThemeToggle />
-                <Link
+                <a
                   href="/api/auth/logout"
                   className="inline-flex items-center justify-center h-8 w-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                 >
                   <LogOut className="h-5 w-5" />
-                </Link>
+                </a>
               </div>
             </div>
           </FadeIn>
