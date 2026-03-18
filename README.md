@@ -1,6 +1,8 @@
 ## contribeau
 visualize your spotify listening history as github contributions and share with friends
 
+note: read the disclaimer on the landing page
+
 enjoy :)
 
 ## Tech Stack
