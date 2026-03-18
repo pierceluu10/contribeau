@@ -1,25 +1,27 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 
 export function RefreshButton() {
-  const router = useRouter();
   const [syncing, setSyncing] = useState(false);
 
   const handleRefresh = useCallback(async () => {
     if (syncing) return;
     setSyncing(true);
     try {
-      await fetch("/api/spotify/sync", { method: "POST" });
-      router.refresh();
-    } catch {
-      /* non-critical, fail silently */
+      const res = await fetch("/api/spotify/sync", { method: "POST" });
+      if (!res.ok) {
+        console.error("Sync failed:", res.status, await res.text());
+      }
+    } catch (err) {
+      console.error("Sync error:", err);
     } finally {
       setSyncing(false);
+      // Hard reload instead of router.refresh() — more reliable on Vercel
+      window.location.reload();
     }
-  }, [syncing, router]);
+  }, [syncing]);
 
   return (
     <button
