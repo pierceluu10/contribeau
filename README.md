@@ -1,4 +1,5 @@
-## visualize your spotify listening history as github contributions and share with friends
+## contribeau
+visualize your spotify listening history as github contributions and share with friends
 enjoy :)
 
 ## Tech Stack
