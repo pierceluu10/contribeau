@@ -1,5 +1,5 @@
 ## visualize your spotify listening history as github contributions and share with friends
-## enjoy :)
+enjoy :)
 
 ## Tech Stack
 - **Next.js 16** (App Router, Turbopack)
