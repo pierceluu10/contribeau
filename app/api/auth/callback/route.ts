@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
   const response = NextResponse.redirect(new URL("/dashboard", origin));
   response.cookies.set("user_id", data.id, {
     httpOnly: true,
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     maxAge: 60 * 60 * 24 * 30,
     path: "/",
