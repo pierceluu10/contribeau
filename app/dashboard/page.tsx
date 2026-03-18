@@ -17,6 +17,7 @@ import { LogOut } from "lucide-react";
 import type { HeatmapDay } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
@@ -26,22 +27,30 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
-  const { data: user } = await supabase
+  const { data: user, error: userError } = await supabase
     .from("users")
     .select("display_name, avatar_url")
     .eq("id", userId)
     .single();
+
+  if (userError) {
+    console.error("Dashboard user fetch error:", userError);
+  }
 
   if (!user) {
     redirect("/");
   }
 
   // fetch listening history aggregated by day
-  const { data: history } = await supabase
+  const { data: history, error: historyError } = await supabase
     .from("listening_history")
     .select("played_at, duration_ms, artist_name")
     .eq("user_id", userId)
     .order("played_at", { ascending: false });
+
+  if (historyError) {
+    console.error("Dashboard history fetch error:", historyError);
+  }
 
   // aggregate by day
   const dayMap = new Map<

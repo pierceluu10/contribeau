@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useCallback, useState } from "react";
-import { toPng } from "html-to-image";
 import { Download, X, Share2 } from "lucide-react";
 import { ShareCard } from "./share-card";
 import { useTimeRange } from "./time-range-provider";
@@ -50,6 +49,7 @@ export function ShareButton({
       // Wait a tick for React to re-render with the new data before capturing
       await new Promise((r) => setTimeout(r, 200));
 
+      const { toPng } = await import("html-to-image");
       const dataUrl = await toPng(cardRef.current, {
         cacheBust: true,
         pixelRatio: 2,

@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { getValidToken, getTopItems } from "@/lib/spotify";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 export async function GET(req: NextRequest) {
   const cookieStore = await cookies();

@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { supabase } from "@/lib/supabase";
 import { getValidToken, getRecentlyPlayed } from "@/lib/spotify";
 
+export const fetchCache = "force-no-store";
+
 // Syncs recent tracks for the currently logged-in user.
 // Called client-side on dashboard load so data is always fresh.
 export async function POST() {
