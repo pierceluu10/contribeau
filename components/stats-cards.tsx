@@ -3,14 +3,20 @@
 import { ShinyCard } from "@/components/animata/card/shiny-card";
 import { useTimeRange } from "./time-range-provider";
 
+const TIME_RANGE_LABELS: Record<string, string> = {
+  short_term: "4 weeks",
+  medium_term: "6 months",
+  long_term: "all time",
+};
+
 export function StatsCards() {
-  const { totalTracks, totalMinutes, activeDays } = useTimeRange();
+  const { timeRange, totalTracks, totalMinutes, activeDays } = useTimeRange();
 
   return (
     <>
       <ShinyCard className="px-3 py-2">
         <p className="text-xs text-muted-foreground lowercase">
-          tracks played
+          tracks played · {TIME_RANGE_LABELS[timeRange] ?? timeRange}
         </p>
         <p className="text-xl font-bold">
           {totalTracks.toLocaleString()}

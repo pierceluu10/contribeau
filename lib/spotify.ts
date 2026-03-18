@@ -84,6 +84,7 @@ export async function getValidToken(user: {
 export async function spotifyFetch(accessToken: string, endpoint: string) {
   const res = await fetch(`${SPOTIFY_API_BASE}${endpoint}`, {
     headers: { Authorization: `Bearer ${accessToken}` },
+    cache: "no-store",
   });
   if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
   return res.json();
