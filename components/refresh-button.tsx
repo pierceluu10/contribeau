@@ -10,7 +10,7 @@ export function RefreshButton() {
     if (syncing) return;
     setSyncing(true);
     try {
-      const res = await fetch("/api/spotify/sync", { method: "POST" });
+      const res = await fetch("/api/spotify/sync", { method: "POST", credentials: "include" });
       if (!res.ok) {
         console.error("Sync failed:", res.status, await res.text());
       }

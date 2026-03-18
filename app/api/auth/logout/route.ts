@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   const response = NextResponse.redirect(new URL("/", origin));
   response.cookies.set("user_id", "", {
     httpOnly: true,
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     maxAge: 0,
     path: "/",

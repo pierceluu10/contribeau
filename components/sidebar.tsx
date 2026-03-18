@@ -20,8 +20,8 @@ export function Sidebar() {
     setLoading(true);
     try {
       const [artistRes, trackRes] = await Promise.all([
-        fetch(`/api/spotify/top?type=artists&time_range=${range}`, { cache: "no-store" }),
-        fetch(`/api/spotify/top?type=tracks&time_range=${range}`, { cache: "no-store" }),
+        fetch(`/api/spotify/top?type=artists&time_range=${range}`, { cache: "no-store", credentials: "include" }),
+        fetch(`/api/spotify/top?type=tracks&time_range=${range}`, { cache: "no-store", credentials: "include" }),
       ]);
       if (!artistRes.ok || !trackRes.ok) throw new Error("Failed to fetch");
       const artistData = await artistRes.json();

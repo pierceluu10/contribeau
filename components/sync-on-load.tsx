@@ -6,7 +6,7 @@ import { useEffect } from "react";
 // This ensures the heatmap is always up to date without requiring a cron job.
 export function SyncOnLoad() {
   useEffect(() => {
-    fetch("/api/spotify/sync", { method: "POST" }).catch(() => {
+    fetch("/api/spotify/sync", { method: "POST", credentials: "include" }).catch(() => {
       // silently ignore — non-critical
     });
   }, []);

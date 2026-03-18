@@ -16,7 +16,7 @@ export function NowPlaying() {
 
   async function fetchNowPlaying() {
     try {
-      const res = await fetch("/api/spotify/currently-playing");
+      const res = await fetch("/api/spotify/currently-playing", { credentials: "include" });
       if (!res.ok) return;
       const json = await res.json();
       setData(json);
