@@ -6,6 +6,30 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/** Format a Date as YYYY-MM-DD in America/New_York timezone */
+export function toESTDateString(date: Date): string {
+  return date.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+}
+
+/** Get the day-of-week (0=Sun) for a Date in EST */
+function getESTDay(date: Date): number {
+  const estStr = date.toLocaleDateString("en-US", {
+    timeZone: "America/New_York",
+    weekday: "short",
+  });
+  const map: Record<string, number> = {
+    Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6,
+  };
+  return map[estStr] ?? 0;
+}
+
+/** Get the month index (0-11) for a Date in EST */
+function getESTMonth(date: Date): number {
+  return new Date(
+    date.toLocaleString("en-US", { timeZone: "America/New_York" })
+  ).getMonth();
+}
+
 export function formatMs(ms: number): string {
   const totalMinutes = Math.floor(ms / 60_000);
   const hours = Math.floor(totalMinutes / 60);
@@ -28,21 +52,22 @@ export function buildHeatmapGrid(
 ): (HeatmapDay | null)[][] {
   const dayMap = new Map(days.map((d) => [d.date, d]));
   const today = new Date();
+  const todayStr = toESTDateString(today);
   const grid: (HeatmapDay | null)[][] = [];
 
   // go back 52 weeks from today
   const start = new Date(today);
-  start.setDate(start.getDate() - (52 * 7 + today.getDay()));
+  start.setDate(start.getDate() - (52 * 7 + getESTDay(today)));
 
   for (let week = 0; week < 53; week++) {
     const column: (HeatmapDay | null)[] = [];
     for (let day = 0; day < 7; day++) {
       const current = new Date(start);
       current.setDate(current.getDate() + week * 7 + day);
-      if (current > today) {
+      const dateStr = toESTDateString(current);
+      if (dateStr > todayStr) {
         column.push(null);
       } else {
-        const dateStr = current.toISOString().slice(0, 10);
         column.push(
           dayMap.get(dateStr) ?? {
             date: dateStr,
@@ -61,7 +86,7 @@ export function buildHeatmapGrid(
 export function getMonthLabels(): { label: string; col: number }[] {
   const today = new Date();
   const start = new Date(today);
-  start.setDate(start.getDate() - (52 * 7 + today.getDay()));
+  start.setDate(start.getDate() - (52 * 7 + getESTDay(today)));
 
   const labels: { label: string; col: number }[] = [];
   const months = [
@@ -73,8 +98,9 @@ export function getMonthLabels(): { label: string; col: number }[] {
   for (let week = 0; week < 53; week++) {
     const d = new Date(start);
     d.setDate(d.getDate() + week * 7);
-    if (d.getMonth() !== lastMonth) {
-      lastMonth = d.getMonth();
+    const m = getESTMonth(d);
+    if (m !== lastMonth) {
+      lastMonth = m;
       labels.push({ label: months[lastMonth], col: week });
     }
   }

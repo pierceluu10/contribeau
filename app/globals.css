@@ -49,9 +49,9 @@
 
 :root {
   --heatmap-empty: #ebedf0;
-  --heatmap-l1: #9be9a8;
-  --heatmap-l2: #40c463;
-  --heatmap-l3: #30a14e;
+  --heatmap-l1: #c6e48b;
+  --heatmap-l2: #7bc96f;
+  --heatmap-l3: #239a3b;
   --heatmap-l4: #1db954;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

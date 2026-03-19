@@ -13,6 +13,7 @@ import { SyncOnLoad } from "@/components/sync-on-load";
 import { RefreshButton } from "@/components/refresh-button";
 import { TimeRangeProvider } from "@/components/time-range-provider";
 import { LogOut } from "lucide-react";
+import { toESTDateString } from "@/lib/utils";
 import type { HeatmapDay } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -58,7 +59,7 @@ export default async function DashboardPage() {
   >();
 
   for (const row of history ?? []) {
-    const date = new Date(row.played_at).toISOString().slice(0, 10);
+    const date = toESTDateString(new Date(row.played_at));
     const entry = dayMap.get(date) ?? {
       totalMs: 0,
       trackCount: 0,

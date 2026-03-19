@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useMemo, type ReactNode } from "react";
+import { toESTDateString } from "@/lib/utils";
 import type { HeatmapDay } from "@/lib/types";
 
 interface TimeRangeContextValue {
@@ -30,7 +31,7 @@ function filterDaysByRange(days: HeatmapDay[], range: string): HeatmapDay[] {
   } else {
     cutoff.setMonth(cutoff.getMonth() - 6);
   }
-  const cutoffStr = cutoff.toISOString().slice(0, 10);
+  const cutoffStr = toESTDateString(cutoff);
   return days.filter((d) => d.date >= cutoffStr);
 }
 
