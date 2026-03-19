@@ -41,9 +41,9 @@ export function formatMs(ms: number): string {
 export function getHeatmapColor(totalMs: number): string {
   if (totalMs === 0) return "var(--heatmap-empty)";
   const minutes = totalMs / 60_000;
-  if (minutes < 60) return "var(--heatmap-l1)";
-  if (minutes < 180) return "var(--heatmap-l2)";
-  if (minutes < 300) return "var(--heatmap-l3)";
+  if (minutes < 120) return "var(--heatmap-l1)";
+  if (minutes < 300) return "var(--heatmap-l2)";
+  if (minutes < 480) return "var(--heatmap-l3)";
   return "var(--heatmap-l4)";
 }
 

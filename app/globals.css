@@ -49,10 +49,10 @@
 
 :root {
   --heatmap-empty: #ebedf0;
-  --heatmap-l1: #c6e48b;
+  --heatmap-l1: #d4edaa;
   --heatmap-l2: #7bc96f;
-  --heatmap-l3: #239a3b;
-  --heatmap-l4: #1db954;
+  --heatmap-l3: #2ea043;
+  --heatmap-l4: #196c2e;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -92,7 +92,7 @@
   --heatmap-l1: #0e4429;
   --heatmap-l2: #006d32;
   --heatmap-l3: #26a641;
-  --heatmap-l4: #1db954;
+  --heatmap-l4: #39d353;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
