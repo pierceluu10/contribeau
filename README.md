@@ -12,4 +12,4 @@ enjoy :)
 - **Spotify Web API** — OAuth login, recently played, top items, now playing
 - **Tailwind CSS 4** + **Motion** (Framer Motion)
 
-![demo](https://github.com/user-attachments/assets/b21b1292-ce40-45e9-85a6-bf2d04851c37)
+<img width="2880" height="1800" alt="image" src="https://github.com/user-attachments/assets/07788396-2b0f-415a-b98c-46d647f8fe12" />
