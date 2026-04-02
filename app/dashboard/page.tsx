@@ -42,11 +42,18 @@ export default async function DashboardPage() {
   }
 
   // fetch listening history aggregated by day
+  // limit to the 52-week heatmap window (53 weeks with buffer) to avoid
+  // Supabase's default 1000-row cap silently truncating older data
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - 53 * 7);
+
   const { data: history, error: historyError } = await supabase
     .from("listening_history")
     .select("played_at, duration_ms, artist_name")
     .eq("user_id", userId)
-    .order("played_at", { ascending: false });
+    .gte("played_at", cutoffDate.toISOString())
+    .order("played_at", { ascending: false })
+    .limit(100_000);
 
   if (historyError) {
     console.error("Dashboard history fetch error:", historyError);
