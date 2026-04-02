@@ -53,7 +53,7 @@ export default async function DashboardPage() {
     .eq("user_id", userId)
     .gte("played_at", cutoffDate.toISOString())
     .order("played_at", { ascending: false })
-    .limit(100_000);
+    .range(0, 99_999);
 
   if (historyError) {
     console.error("Dashboard history fetch error:", historyError);
