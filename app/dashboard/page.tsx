@@ -13,7 +13,6 @@ import { SyncOnLoad } from "@/components/sync-on-load";
 import { RefreshButton } from "@/components/refresh-button";
 import { TimeRangeProvider } from "@/components/time-range-provider";
 import { LogOut } from "lucide-react";
-import { toESTDateString } from "@/lib/utils";
 import type { HeatmapDay } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -41,63 +40,28 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
-  // fetch listening history aggregated by day
-  // limit to the 52-week heatmap window (53 weeks with buffer) to avoid
-  // Supabase's default 1000-row cap silently truncating older data
+  // aggregate listening history by EST day in the database to avoid
+  // PostgREST's max-rows cap (returns 1 row/day instead of 1 row/track)
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - 53 * 7);
 
-  const { data: history, error: historyError } = await supabase
-    .from("listening_history")
-    .select("played_at, duration_ms, artist_name")
-    .eq("user_id", userId)
-    .gte("played_at", cutoffDate.toISOString())
-    .order("played_at", { ascending: false })
-    .range(0, 99_999);
+  const { data: heatmapRows, error: historyError } = await supabase
+    .rpc("get_listening_heatmap", {
+      p_user_id: userId,
+      p_cutoff: cutoffDate.toISOString(),
+    });
 
   if (historyError) {
     console.error("Dashboard history fetch error:", historyError);
   }
 
-  // aggregate by day
-  const dayMap = new Map<
-    string,
-    { totalMs: number; trackCount: number; artistCounts: Map<string, number> }
-  >();
-
-  for (const row of history ?? []) {
-    const date = toESTDateString(new Date(row.played_at));
-    const entry = dayMap.get(date) ?? {
-      totalMs: 0,
-      trackCount: 0,
-      artistCounts: new Map(),
-    };
-    entry.totalMs += row.duration_ms;
-    entry.trackCount += 1;
-    entry.artistCounts.set(
-      row.artist_name,
-      (entry.artistCounts.get(row.artist_name) ?? 0) + 1
-    );
-    dayMap.set(date, entry);
-  }
-
-  const days: HeatmapDay[] = Array.from(dayMap.entries()).map(
-    ([date, entry]) => {
-      let topArtist: string | null = null;
-      let maxCount = 0;
-      for (const [artist, count] of entry.artistCounts) {
-        if (count > maxCount) {
-          maxCount = count;
-          topArtist = artist;
-        }
-      }
-      return {
-        date,
-        totalMs: entry.totalMs,
-        trackCount: entry.trackCount,
-        topArtist,
-      };
-    }
+  const days: HeatmapDay[] = (heatmapRows ?? []).map(
+    (row: { date: string; total_ms: number; track_count: number; top_artist: string | null }) => ({
+      date: row.date,
+      totalMs: Number(row.total_ms),
+      trackCount: Number(row.track_count),
+      topArtist: row.top_artist ?? null,
+    })
   );
 
   const shareDays = days.map((d) => ({ date: d.date, totalMs: d.totalMs }));
